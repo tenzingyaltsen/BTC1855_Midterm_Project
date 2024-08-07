@@ -177,7 +177,18 @@ cancelled_trips_indices <- which(trip_clean$start_station_name ==
                                    trip_clean$end_station_name &
                                    trip_clean$duration < 3*60)
 cancelled_trips <- trip_clean[cancelled_trips_indices,]
-options(max.print=1100)
 print(cancelled_trips$id)
 # Remove "cancelled trips" from trip data.
 trip_clean <- trip_clean[-cancelled_trips_indices,]
+
+# Identify outliers in duration variable of trip data using quantile method.
+q1 <- quantile(trip_clean$duration, probs = 0.25)
+q3 <- quantile(trip_clean$duration, probs = 0.75)
+upper_limit <- q3 + 1.5*IQR(trip_clean$duration)
+lower_limit <- q1 - 1.5*IQR(trip_clean$duration)
+# Lower limit results in negative duration value. Not possible, so ignored.
+trip_outliers_indices <- which(trip_clean$duration > upper_limit)
+trip_outliers <- trip_clean[trip_outliers_indices,]
+print(trip_outliers$id)
+# Remove outliers from trip data.
+trip_clean <- trip_clean[-trip_outliers_indices,]
