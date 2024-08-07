@@ -227,3 +227,13 @@ freq_weekday_trip <- start_weekdays_dates[freq_weekday_indices,]
 #' starting and ending stations during weekday rush hours.
 freq(freq_weekday_trip$start_station_name)
 freq(freq_weekday_trip$end_station_name)
+
+# Identifying most common starting/ending stations on the weekends.
+#' Create data frame for trips on weekends by identifying indices of trips
+#' that have the start date on a weekend.
+start_weekends_indices <- which(wday(trip_clean$start_date, label = FALSE) > 5)
+start_weekends <- trip_clean[start_weekends_indices,]
+#' Run frequency analysis on new data frame to determine most common
+#' starting and ending stations during weekends.
+freq(start_weekends$start_station_name)
+freq(start_weekends$end_station_name)
