@@ -46,16 +46,6 @@ library(funModeling)
 library(tidyverse) 
 library(Hmisc)
 
-#' Set up basic EDA function for reference only. DELETE ONCE DONE. 
-basic_eda <- function(data) {
-  glimpse(data)
-  print(status(data))
-  freq(data) 
-  print(profiling_num(data))
-  plot_num(data)
-  describe(data)
-}
-
 # Run EDA for trip data.
 glimpse(trip_clean)
 #' We can see that "id" variables are set to int when they should be 
@@ -266,3 +256,28 @@ nov_indicies <- which(month(trip_clean$start_date) == 11)
 (sum(trip_clean[nov_indicies,"duration"]) / (60*60*24)) / 30
 dec_indicies <- which(month(trip_clean$start_date) == 12)
 (sum(trip_clean[dec_indicies,"duration"]) / (60*60*24)) / 31
+
+# Join data frames to flag high correlations of rental patterns.
+#' Clean each data frame, ensuring that key variables for inner joining
+#' are named the same and are same type. Keep only key variables and 
+#' variables for coefficient analysis (only numerical variables accepted).
+trip_final <- subset(trip_clean, select = c("start_station_id","start_date","duration"))
+trip_final$start_date <- as.Date(trip_final$start_date)
+station_final <- subset(station_clean, select = c("id","city","dock_count"))
+names(station_final)[names(station_final)=="id"] <- "start_station_id"
+station_final$start_station_id <- as.character(station_final$start_station_id)
+weather_final <- weather_clean
+names(weather_final)[names(weather_final)=="date"] <- "start_date"
+weather_final$start_date <- as.Date(weather_final$start_date)
+# Inner join the final data frames.
+combined_data1 <- inner_join(trip_final, station_final)
+combined_data2 <- inner_join(combined_data1, weather_final)
+# Keep only numerical variables for analysis.
+combined_data3 <- combined_data2[,c(3,5:15)]
+# Omit rows with NAs as they will invalidate the correlation analysis.
+combined_data3 <- na.omit(combined_data3)
+# Create a correlation object for the combined data frame using cor().
+correlation_object <- cor(combined_data3)
+# Plot the correlation.
+corrplot(correlation_object, method = "number", tl.cex=0.5, 
+         number.cex = 0.5)
