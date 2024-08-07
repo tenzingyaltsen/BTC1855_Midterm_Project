@@ -199,10 +199,10 @@ trip_clean <- trip_clean[-trip_outliers_indices,]
 options("lubridate.week.start" = 1)
 # Create data frame with start dates/times of trips for weekdays.
 start_weekdays_indices <- which(wday(trip_clean$start_date, label = FALSE) < 6)
-start_weekdays_dates <- trip_clean[start_weekdays_indices,"start_date"]
+start_weekdays_dates <- trip_clean[start_weekdays_indices,]
 # Use below package to change date/character objects into hms objects.
 library(hms)
-start_weekdays_times <- as_hms(start_weekdays_dates)
+start_weekdays_times <- as_hms(start_weekdays_dates$start_date)
 #' Create histogram using hms converted objects (times only). Change bins
 #' to every 15 minutes and identify/mark rush hours. Amend axis titles.
 ggplot() + geom_histogram(aes(x=start_weekdays_times), bins = 24*4) + 
@@ -215,3 +215,15 @@ ggplot() + geom_histogram(aes(x=start_weekdays_times), bins = 24*4) +
   geom_vline(xintercept = as_hms("18:15:00")) +
   geom_text(aes(x=as_hms("18:40:00"), label="18:15:00", y=10000), angle=90) +
   labs(y="Frequency", x = "Bike Trip Start Time")
+
+# Identify indices of trips that start within rush hours.
+freq_weekday_indices <- which((as_hms(start_weekdays_dates$start_date) >= as_hms("07:45:00") &
+        as_hms(start_weekdays_dates$start_date) <= as_hms("09:30:00")) |
+        (as_hms(start_weekdays_dates$start_date) >= as_hms("16:45:00") & 
+           as_hms(start_weekdays_dates$start_date) <= as_hms("09:30:00")))
+# Create data frame from weekday trip data using above indices.
+freq_weekday_trip <- start_weekdays_dates[freq_weekday_indices,]
+#' Run frequency analysis on new data frame to determine most common
+#' starting and ending stations during weekday rush hours.
+freq(freq_weekday_trip$start_station_name)
+freq(freq_weekday_trip$end_station_name)
