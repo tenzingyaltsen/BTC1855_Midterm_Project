@@ -237,3 +237,32 @@ start_weekends <- trip_clean[start_weekends_indices,]
 #' starting and ending stations during weekends.
 freq(start_weekends$start_station_name)
 freq(start_weekends$end_station_name)
+
+#' Calculate average utilization of bikes (ratio of bike usage time to 
+#' time in month) using the month of start date variable as an indicator 
+#' of month.
+jan_indicies <- which(month(trip_clean$start_date) == 1)
+(sum(trip_clean[jan_indicies,"duration"]) / (60*60*24)) / 31
+# Note that 2014 was not a leap year.
+feb_indicies <- which(month(trip_clean$start_date) == 2)
+(sum(trip_clean[feb_indicies,"duration"]) / (60*60*24)) / 28
+mar_indicies <- which(month(trip_clean$start_date) == 3)
+(sum(trip_clean[mar_indicies,"duration"]) / (60*60*24)) / 31
+apr_indicies <- which(month(trip_clean$start_date) == 4)
+(sum(trip_clean[apr_indicies,"duration"]) / (60*60*24)) / 30
+may_indicies <- which(month(trip_clean$start_date) == 5)
+(sum(trip_clean[may_indicies,"duration"]) / (60*60*24)) / 31
+jun_indicies <- which(month(trip_clean$start_date) == 6)
+(sum(trip_clean[jun_indicies,"duration"]) / (60*60*24)) / 30
+jul_indicies <- which(month(trip_clean$start_date) == 7)
+(sum(trip_clean[jul_indicies,"duration"]) / (60*60*24)) / 31
+aug_indicies <- which(month(trip_clean$start_date) == 8)
+(sum(trip_clean[aug_indicies,"duration"]) / (60*60*24)) / 31
+sep_indicies <- which(month(trip_clean$start_date) == 9)
+(sum(trip_clean[sep_indicies,"duration"]) / (60*60*24)) / 30
+oct_indicies <- which(month(trip_clean$start_date) == 10)
+(sum(trip_clean[oct_indicies,"duration"]) / (60*60*24)) / 31
+nov_indicies <- which(month(trip_clean$start_date) == 11)
+(sum(trip_clean[nov_indicies,"duration"]) / (60*60*24)) / 30
+dec_indicies <- which(month(trip_clean$start_date) == 12)
+(sum(trip_clean[dec_indicies,"duration"]) / (60*60*24)) / 31
