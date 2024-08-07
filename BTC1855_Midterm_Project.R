@@ -171,3 +171,13 @@ par(mfrow = c(1, 1))
 hist(weather_clean$max_gust_speed_mph)
 hist(weather_clean$precipitation_inches)
 profiling_num(weather_clean)
+
+# Find "cancelled trips" using criteria outlined in midterm guidelines.
+cancelled_trips_indices <- which(trip_clean$start_station_name == 
+                                   trip_clean$end_station_name &
+                                   trip_clean$duration < 3*60)
+cancelled_trips <- trip_clean[cancelled_trips_indices,]
+options(max.print=1100)
+print(cancelled_trips$id)
+# Remove "cancelled trips" from trip data.
+trip_clean <- trip_clean[-cancelled_trips_indices,]
