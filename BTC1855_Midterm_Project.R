@@ -192,3 +192,26 @@ trip_outliers <- trip_clean[trip_outliers_indices,]
 print(trip_outliers$id)
 # Remove outliers from trip data.
 trip_clean <- trip_clean[-trip_outliers_indices,]
+
+#' Identifying rush hours during the weekdays. Opt to use start date and 
+#' time values since that is when the bike is first considered "taken". 
+#' Set week start to Monday for ease of lubridate package use.
+options("lubridate.week.start" = 1)
+# Create data frame with start dates/times of trips for weekdays.
+start_weekdays_indices <- which(wday(trip_clean$start_date, label = FALSE) < 6)
+start_weekdays_dates <- trip_clean[start_weekdays_indices,"start_date"]
+# Use below package to change date/character objects into hms objects.
+library(hms)
+start_weekdays_times <- as_hms(start_weekdays_dates)
+#' Create histogram using hms converted objects (times only). Change bins
+#' to every 15 minutes and identify/mark rush hours. Amend axis titles.
+ggplot() + geom_histogram(aes(x=start_weekdays_times), bins = 24*4) + 
+  geom_vline(xintercept = as_hms("07:45:00")) +
+  geom_text(aes(x=as_hms("07:05:00"), label="07:45:00", y=10000), angle=90) +
+  geom_vline(xintercept = as_hms("09:30:00")) +
+  geom_text(aes(x=as_hms("09:55:00"), label="09:30:00", y=10000), angle=90) +
+  geom_vline(xintercept = as_hms("16:45:00")) +
+  geom_text(aes(x=as_hms("16:05:00"), label="16:45:00", y=10000), angle=90) +
+  geom_vline(xintercept = as_hms("18:15:00")) +
+  geom_text(aes(x=as_hms("18:40:00"), label="18:15:00", y=10000), angle=90) +
+  labs(y="Frequency", x = "Bike Trip Start Time")
