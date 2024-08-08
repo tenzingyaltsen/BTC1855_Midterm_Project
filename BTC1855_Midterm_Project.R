@@ -191,6 +191,7 @@ options("lubridate.week.start" = 1)
 start_weekdays_indices <- which(wday(trip_clean$start_date, label = FALSE) < 6)
 start_weekdays_dates <- trip_clean[start_weekdays_indices,]
 # Use below package to change date/character objects into hms objects.
+install.packages("hms")
 library(hms)
 start_weekdays_times <- as_hms(start_weekdays_dates$start_date)
 #' Create histogram using hms converted objects (times only). Change bins
@@ -285,7 +286,9 @@ NA_indices <- which(is.na(combined_data3$max_visibility_miles) |
 combined_data3 <- na.omit(combined_data3)
 # Create a correlation object for the combined data frame using cor().
 correlation_object <- cor(combined_data3)
+correlation_object
 # Plot the correlation.
+install.packages("corrplot")
 library(corrplot)
 corrplot(correlation_object, method = "number", tl.cex=0.5, 
          number.cex = 0.5)
