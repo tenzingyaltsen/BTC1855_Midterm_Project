@@ -274,10 +274,18 @@ combined_data1 <- inner_join(trip_final, station_final)
 combined_data2 <- inner_join(combined_data1, weather_final)
 # Keep only numerical variables for analysis.
 combined_data3 <- combined_data2[,c(3,5:15)]
+#' Find which variables contain any NAs and keep a record of which 
+#' rows contain any NAs.
+status(combined_data3)
+NA_indices <- which(is.na(combined_data3$max_visibility_miles) |
+        is.na(combined_data3$mean_visibility_miles) |
+        is.na(combined_data3$min_visibility_miles) |
+        is.na(combined_data3$max_gust_speed_mph))
 # Omit rows with NAs as they will invalidate the correlation analysis.
 combined_data3 <- na.omit(combined_data3)
 # Create a correlation object for the combined data frame using cor().
 correlation_object <- cor(combined_data3)
 # Plot the correlation.
+library(corrplot)
 corrplot(correlation_object, method = "number", tl.cex=0.5, 
          number.cex = 0.5)
