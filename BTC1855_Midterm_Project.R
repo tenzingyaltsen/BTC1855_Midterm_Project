@@ -4,7 +4,10 @@
 #' (https://www.kaggle.com/datasets/benhamner/sf-bay-area-bike-share). 
 
 # Install and load relevant packages.
-install.packages("dplyr")
+# SK  It may at times be okay to include the code installing packages but no okay to enforce 
+# re-installing packages every time a code is sourced. Best practice is to include these 
+# lines and comment them. Then ask the user to un-comment when necessary.
+#install.packages("dplyr")
 library(dplyr)
 
 # Import data sets and create working copies.
@@ -36,12 +39,19 @@ which(weather_clean == "")
 trip_clean[trip_clean == ""] <- NA
 #' Weather data has both NAs and blank spaces. Let's change blank spaces 
 #' to NAs for consistency.
+# SK Normally, you should investigate why some missing values are NA and why
+# some are empty strings. In this case missing numeric values are coded as NA,
+# missing strings are coded as "".  But sometimes, the difference is more
+# nuanced, and may actually provide you with more data.
 weather_clean[weather_clean == ""] <- NA
 
 # Install and load packages for exploratory data analysis.
-install.packages("tidyverse")
-install.packages("funModeling")
-install.packages("Hmisc")
+# SK  It may at times be okay to include the code installing packages but no okay to enforce 
+# re-installing packages every time a code is sourced. Best practice is to include these 
+# lines and comment them. Then ask the user to un-comment when necessary.
+#install.packages("tidyverse")
+#install.packages("funModeling")
+#install.packages("Hmisc")
 library(funModeling) 
 library(tidyverse) 
 library(Hmisc)
@@ -57,6 +67,8 @@ trip_clean$bike_id <- as.character(trip_clean$bike_id)
 #' We can see that "date" variables are set to character when they should 
 #' be date type.
 library(lubridate)
+# SK strptime() is a base function. You don't need lubridate package to use it.
+
 trip_clean$start_date <- strptime(trip_clean$start_date, "%m/%d/%Y %H:%M")
 trip_clean$end_date <- strptime(trip_clean$end_date, "%m/%d/%Y %H:%M")
 
@@ -65,6 +77,8 @@ status(trip_clean)
 #' There are 74 different station names and 70 different station IDs. 
 #' Let's investigate by finding the unique combinations of the above and
 #' seeing which IDs are duplicated among the stations.
+
+# SK Good catch, kudos!!
 start_station_name_id_combinations <- unique(trip_clean[,c("start_station_name", "start_station_id")])
 start_station_name_id_combinations[duplicated(start_station_name_id_combinations$start_station_id),]
 # Found them.
@@ -145,6 +159,8 @@ status(weather_clean)
 
 # freq() for character variables in weather data.
 freq(weather_clean)
+# SK It would be great to recode 'rain' as 'Rain' and include in the correlation.
+
 #' hist()) and profiling_num() for relevant numerical variables.
 glimpse(weather_clean)
 par(mfrow = c(1, 3))
@@ -191,7 +207,10 @@ options("lubridate.week.start" = 1)
 start_weekdays_indices <- which(wday(trip_clean$start_date, label = FALSE) < 6)
 start_weekdays_dates <- trip_clean[start_weekdays_indices,]
 # Use below package to change date/character objects into hms objects.
-install.packages("hms")
+# SK  It may at times be okay to include the code installing packages but no okay to enforce 
+# re-installing packages every time a code is sourced. Best practice is to include these 
+# lines and comment them. Then ask the user to un-comment when necessary.
+#install.packages("hms")
 library(hms)
 start_weekdays_times <- as_hms(start_weekdays_dates$start_date)
 #' Create histogram using hms converted objects (times only). Change bins
@@ -232,6 +251,8 @@ freq(start_weekends$end_station_name)
 #' Calculate average utilization of bikes (ratio of bike usage time to 
 #' time in month) using the month of start date variable as an indicator 
 #' of month.
+
+# SK These indices could easily be calculated in a very short loop.
 jan_indicies <- which(month(trip_clean$start_date) == 1)
 (sum(trip_clean[jan_indicies,"duration"]) / (60*60*24)) / 31
 # Note that 2014 was not a leap year.
@@ -288,7 +309,10 @@ combined_data3 <- na.omit(combined_data3)
 correlation_object <- cor(combined_data3)
 correlation_object
 # Plot the correlation.
-install.packages("corrplot")
+# SK  It may at times be okay to include the code installing packages but no okay to enforce 
+# re-installing packages every time a code is sourced. Best practice is to include these 
+# lines and comment them. Then ask the user to un-comment when necessary.
+#install.packages("corrplot")
 library(corrplot)
 corrplot(correlation_object, method = "number", tl.cex=0.5, 
          number.cex = 0.5)
